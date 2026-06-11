@@ -1,8 +1,12 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../providers/prayer_provider.dart';
+import '../../services/remote_config_service.dart';
 import '../../theme/app_theme.dart';
 import '../home/home_screen.dart';
+import '../maintenance/maintenance_screen.dart';
+import '../update/force_update_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -40,6 +44,27 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _navigate() async {
     if (!mounted) return;
     context.read<PrayerProvider>().loadWithGPS();
+
+    final rc = RemoteConfigService.instance;
+
+    if (rc.maintenanceMode) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (_) => const MaintenanceScreen(),
+      ));
+      return;
+    }
+
+    final info = await PackageInfo.fromPlatform();
+    final buildNumber = int.tryParse(info.buildNumber) ?? 0;
+    if (rc.forceUpdateEnabled && buildNumber < rc.forceUpdateMinBuild) {
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (_) => ForceUpdateScreen(url: rc.forceUpdateUrl),
+      ));
+      return;
+    }
+
+    if (!mounted) return;
     Navigator.of(context).pushReplacement(PageRouteBuilder(
       pageBuilder: (_, __, ___) => const HomeScreen(),
       transitionsBuilder: (_, anim, __, child) =>
