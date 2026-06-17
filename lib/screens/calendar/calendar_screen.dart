@@ -44,8 +44,9 @@ class _CalendarScreenState extends State<CalendarScreen>
   void initState() {
     super.initState();
     _tabs = TabController(length: 2, vsync: this);
-    _viewHijri = HijriDate.now();
-    _viewGregorian = DateTime.now();
+    final now = DateTime.now();
+    _viewGregorian = DateTime(now.year, now.month, 1);
+    _viewHijri = HijriDate.fromGregorian(_viewGregorian);
   }
 
   @override
@@ -56,21 +57,15 @@ class _CalendarScreenState extends State<CalendarScreen>
 
   void _prevMonth() {
     setState(() {
-      int m = _viewHijri.month - 1;
-      int y = _viewHijri.year;
-      if (m < 1) { m = 12; y--; }
-      _viewHijri = HijriDate(y, m, 1);
       _viewGregorian = DateTime(_viewGregorian.year, _viewGregorian.month - 1, 1);
+      _viewHijri = HijriDate.fromGregorian(_viewGregorian);
     });
   }
 
   void _nextMonth() {
     setState(() {
-      int m = _viewHijri.month + 1;
-      int y = _viewHijri.year;
-      if (m > 12) { m = 1; y++; }
-      _viewHijri = HijriDate(y, m, 1);
       _viewGregorian = DateTime(_viewGregorian.year, _viewGregorian.month + 1, 1);
+      _viewHijri = HijriDate.fromGregorian(_viewGregorian);
     });
   }
 
