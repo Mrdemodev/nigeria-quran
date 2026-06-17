@@ -46,7 +46,7 @@ class _CalendarScreenState extends State<CalendarScreen>
     _tabs = TabController(length: 2, vsync: this);
     final now = DateTime.now();
     _viewGregorian = DateTime(now.year, now.month, 1);
-    _viewHijri = HijriDate.fromGregorian(_viewGregorian);
+    _viewHijri = HijriDate.now(); // use today's Hijri, not the 1st of the Gregorian month
   }
 
   @override
@@ -58,14 +58,17 @@ class _CalendarScreenState extends State<CalendarScreen>
   void _prevMonth() {
     setState(() {
       _viewGregorian = DateTime(_viewGregorian.year, _viewGregorian.month - 1, 1);
-      _viewHijri = HijriDate.fromGregorian(_viewGregorian);
+      // Use day 15 of the Gregorian month to pick the dominant Hijri month
+      final mid = DateTime(_viewGregorian.year, _viewGregorian.month, 15);
+      _viewHijri = HijriDate.fromGregorian(mid);
     });
   }
 
   void _nextMonth() {
     setState(() {
       _viewGregorian = DateTime(_viewGregorian.year, _viewGregorian.month + 1, 1);
-      _viewHijri = HijriDate.fromGregorian(_viewGregorian);
+      final mid = DateTime(_viewGregorian.year, _viewGregorian.month, 15);
+      _viewHijri = HijriDate.fromGregorian(mid);
     });
   }
 
