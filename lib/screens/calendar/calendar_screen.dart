@@ -446,7 +446,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                           style: TextStyle(fontFamily: AppTheme.arabicFontFamily, fontSize: 12,
                               color: isPast ? Colors.grey : e.color),
                           textDirection: TextDirection.rtl),
-                      Text('${e.hijriDay} ${HijriDate(1445, e.hijriMonth, e.hijriDay).monthName}',
+                      Text('${e.hijriDay} ${HijriDate.monthNameFor(e.hijriMonth)}',
                           style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38)),
                     ],
                   ),

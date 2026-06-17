@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
@@ -11,8 +10,6 @@ class NotificationService {
 
   final _plugin = FlutterLocalNotificationsPlugin();
   bool _initialized = false;
-
-  static const _channel = MethodChannel('com.nigeriaquran/prefs');
 
   static const _prayerChannel = AndroidNotificationChannel(
     'prayer_times', 'Prayer Times',
@@ -47,11 +44,6 @@ class NotificationService {
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     await androidPlugin?.createNotificationChannel(_prayerChannel);
     await androidPlugin?.createNotificationChannel(_dailyChannel);
-
-    // Clear stale notification data from older plugin versions
-    try {
-      await _channel.invokeMethod('clearScheduledNotifications');
-    } catch (_) {}
 
     _initialized = true;
   }
@@ -214,7 +206,7 @@ class NotificationService {
         ),
         iOS: const DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
   }

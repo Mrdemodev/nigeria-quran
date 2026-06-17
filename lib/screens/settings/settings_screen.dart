@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/prayer_provider.dart';
 import '../../utils/prayer_calculator.dart';
@@ -183,6 +185,27 @@ class SettingsScreen extends StatelessWidget {
                 _SettingsCard(
                   isDark: isDark,
                   children: [
+                    _TapTile(
+                      isDark: isDark,
+                      icon: Icons.notifications_active_rounded,
+                      iconColor: AppTheme.primaryGreen,
+                      title: 'Notification Permission',
+                      subtitle: 'Tap to enable notifications in system settings',
+                      onTap: () async {
+                        final granted = await Permission.notification.isGranted;
+                        if (!granted) {
+                          await openAppSettings();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Notifications are enabled'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    _Divider(isDark: isDark),
                     _SwitchTile(
                       isDark: isDark,
                       icon: Icons.mosque_rounded,
@@ -247,12 +270,17 @@ class SettingsScreen extends StatelessWidget {
                 _SettingsCard(
                   isDark: isDark,
                   children: [
-                    _InfoTile(
-                      isDark: isDark,
-                      icon: Icons.info_outline_rounded,
-                      iconColor: AppTheme.primaryGreen,
-                      title: "Qur'an NG",
-                      subtitle: 'Version 1.0.0',
+                    FutureBuilder<PackageInfo>(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (_, snap) => _InfoTile(
+                        isDark: isDark,
+                        icon: Icons.info_outline_rounded,
+                        iconColor: AppTheme.primaryGreen,
+                        title: "Qur'an NG",
+                        subtitle: snap.hasData
+                            ? 'Version ${snap.data!.version} (build ${snap.data!.buildNumber})'
+                            : 'Version 1.0.0',
+                      ),
                     ),
                     Divider(height: 1, indent: 64, color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.06)),
                     _TapTile(
@@ -685,7 +713,7 @@ The App is suitable for all ages. We do not knowingly collect information from c
 We may update this Privacy Policy from time to time. Updates will be reflected in new versions of the App.
 
 9. CONTACT
-For questions or concerns about this Privacy Policy, please contact us at support@quranng.app.
+For questions or concerns about this Privacy Policy, please contact us at quranng@gmail.com.
 ''';
 
 const String _kTermsAndConditions = '''
@@ -724,6 +752,6 @@ The developers shall not be liable for any indirect, incidental, or consequentia
 We reserve the right to modify these Terms at any time. Continued use of the App after changes constitutes acceptance of the updated Terms.
 
 10. CONTACT
-For questions about these Terms, contact us at support@quranng.app.
+For questions about these Terms, contact us at quranng@gmail.com.
 ''';
 

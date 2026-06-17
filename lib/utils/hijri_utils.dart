@@ -17,6 +17,9 @@ class HijriDate {
   String get monthName =>
       (month >= 1 && month <= 12) ? _monthNames[month - 1] : '';
 
+  static String monthNameFor(int month) =>
+      (month >= 1 && month <= 12) ? _monthNames[month - 1] : '';
+
   String formatted() => '$day $monthName $year AH';
 
   static HijriDate now() => fromGregorian(DateTime.now());
