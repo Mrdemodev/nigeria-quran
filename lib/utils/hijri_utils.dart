@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hijri/hijri_calendar.dart';
 
 class HijriDate {
@@ -13,14 +14,20 @@ class HijriDate {
     'Ramadan', 'Shawwal', 'Dhul Qi\'dah', 'Dhul Hijjah',
   ];
 
-  String get monthName => _monthNames[month - 1];
+  String get monthName =>
+      (month >= 1 && month <= 12) ? _monthNames[month - 1] : '';
 
   String formatted() => '$day $monthName $year AH';
 
   static HijriDate now() => fromGregorian(DateTime.now());
 
   static HijriDate fromGregorian(DateTime date) {
-    final h = HijriCalendar.fromDate(date);
-    return HijriDate(h.hYear, h.hMonth, h.hDay);
+    try {
+      final h = HijriCalendar.fromDate(date);
+      return HijriDate(h.hYear, h.hMonth, h.hDay);
+    } catch (e) {
+      debugPrint('HijriDate conversion error: $e');
+      return HijriDate(0, 0, 0);
+    }
   }
 }

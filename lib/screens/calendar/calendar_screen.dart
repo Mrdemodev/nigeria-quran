@@ -169,6 +169,35 @@ class _CalendarScreenState extends State<CalendarScreen>
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
       child: Column(
         children: [
+          // Today's Hijri date card
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0A1E44), Color(0xFF1565C0)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.today_rounded, color: Colors.white70, size: 20),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Today',
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.65), fontSize: 11)),
+                    Text(todayHijri.formatted(),
+                        style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                  ],
+                ),
+              ],
+            ),
+          ),
           // Month navigation
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -302,15 +331,17 @@ class _CalendarScreenState extends State<CalendarScreen>
                       : (isDark ? Colors.white70 : Colors.black87),
                 ),
               ),
-              Text(
-                '${hijri.day}',
-                style: TextStyle(
-                  fontSize: 8,
-                  color: isToday ? Colors.white70
-                      : hasEvent ? event.color
-                      : (isDark ? Colors.white30 : Colors.black38),
+              if (hijri.day > 0)
+                Text(
+                  '${hijri.day}',
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    color: isToday ? Colors.white70
+                        : hasEvent ? event.color
+                        : (isDark ? Colors.white54 : Colors.black54),
+                  ),
                 ),
-              ),
               if (hasEvent)
                 Container(
                   width: 4, height: 4,
