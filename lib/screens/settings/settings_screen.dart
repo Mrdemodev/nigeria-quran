@@ -196,6 +196,7 @@ class SettingsScreen extends StatelessWidget {
                         if (!granted) {
                           await openAppSettings();
                         } else {
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Notifications are enabled'),
@@ -684,36 +685,48 @@ class _Divider extends StatelessWidget {
 }
 
 const String _kPrivacyPolicy = '''
-Last updated: June 2025
+Effective date: November 24, 2026
 
-Qur'an NG ("the App") is developed to serve the Muslim community. This Privacy Policy explains how we collect, use, and protect your information.
+Qur'an NG ("the App") is developed to help users read and listen to the Qur'an, view prayer information, and locate the Qibla. This Privacy Policy explains how information is handled.
 
-1. INFORMATION WE COLLECT
-The App does not collect any personal information. All data (bookmarks, notes, progress, settings) is stored locally on your device and is never transmitted to any server.
+1. INFORMATION THE APP COLLECTS
+The App itself does not request your name, email address, account credentials, or contacts. Bookmarks, reading progress, quiz progress, downloads, and settings are stored locally on your device.
 
 2. LOCATION DATA
-The App requests location access solely to calculate accurate prayer times and Qibla direction for your area. Location data is processed on-device and is not stored or shared.
+The App requests approximate or precise location access to calculate prayer times and Qibla direction. Location is used on your device and may be stored locally with your settings. You may deny or revoke location permission in your device settings; core Qur'an reading features remain available.
 
-3. INTERNET ACCESS
-The App uses the internet only to stream Qur'anic audio recitations from licensed CDN servers. No personal data is transmitted during this process.
+3. DEVICE SERVICES AND STORAGE
+The App may use notifications, local storage, network access, media playback, and sharing features. Notifications are scheduled locally; the App does not operate a third-party push-messaging service. Shared Quran images or text are handled by the sharing service you choose.
 
-4. NOTIFICATIONS
-Daily ayah and prayer time notifications are scheduled locally on your device. We do not use push notification services or third-party messaging platforms.
+4. THIRD-PARTY SERVICES
+The App uses:
+- Google Firebase and Firebase Remote Config for app configuration and feature settings.
+- Google AdMob to provide advertisements. Google or its partners may collect or receive device identifiers, IP address, approximate location, app interactions, and diagnostics for advertising, fraud prevention, and measurement.
+- Audio and Qur'an audio-content servers when streaming recitations.
+- Google Fonts only to render text. Font files are bundled in the App.
 
-5. THIRD-PARTY SERVICES
-The App uses Google Fonts to render Arabic text. Font files are bundled within the App and no data is sent to Google during use.
+These providers process data according to their own privacy policies. Google Privacy Policy: https://policies.google.com/privacy
 
-6. DATA STORAGE
-All user data remains exclusively on your device. Uninstalling the App removes all associated data permanently.
+5. INTERNET AND AUDIO
+Streaming Qur'anic audio requires internet access. Your device may transmit IP address and standard network information to the selected audio server.
 
-7. CHILDREN'S PRIVACY
-The App is suitable for all ages. We do not knowingly collect information from children under 13.
+6. DATA USE
+We use information to provide and maintain features, calculate prayer-related information, control app features remotely, display advertisements, and improve the App. We do not sell personal information.
 
-8. CHANGES TO THIS POLICY
-We may update this Privacy Policy from time to time. Updates will be reflected in new versions of the App.
+7. DATA RETENTION AND SECURITY
+Local bookmarks, progress, downloads, and settings remain on your device until deleted or the App is uninstalled. Third-party providers retain data according to their policies. No internet-based storage system is completely secure.
 
-9. CONTACT
-For questions or concerns about this Privacy Policy, please contact us at quranng@gmail.com.
+8. CHILDREN'S PRIVACY
+The App is intended for a general audience and does not knowingly collect personal information from children. If you believe a child has provided personal information, contact us at quranng@gmail.com.
+
+9. YOUR CHOICES
+You can revoke location and notification permissions, clear App storage, restrict ad personalization in your Google device settings where available, or uninstall the App.
+
+10. CHANGES
+We may update this Privacy Policy. The effective date will change when the policy is revised.
+
+11. CONTACT
+For questions or requests, contact: quranng@gmail.com
 ''';
 
 const String _kTermsAndConditions = '''
