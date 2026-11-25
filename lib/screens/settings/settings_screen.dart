@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/prayer_provider.dart';
 import '../../utils/prayer_calculator.dart';
@@ -286,6 +288,22 @@ class SettingsScreen extends StatelessWidget {
                     Divider(height: 1, indent: 64, color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.06)),
                     _TapTile(
                       isDark: isDark,
+                      icon: Icons.ads_click_rounded,
+                      iconColor: const Color(0xFF6A1B9A),
+                      title: 'Privacy Choices',
+                      subtitle: 'Manage ad consent',
+                      onTap: () async {
+                        final status = await ConsentInformation.instance
+                            .getPrivacyOptionsRequirementStatus();
+                        if (status ==
+                            PrivacyOptionsRequirementStatus.required) {
+                          await ConsentForm.showPrivacyOptionsForm((_) {});
+                        }
+                      },
+                    ),
+                    Divider(height: 1, indent: 64, color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.06)),
+                    _TapTile(
+                      isDark: isDark,
                       icon: Icons.star_rounded,
                       iconColor: AppTheme.gold,
                       title: 'Rate this App',
@@ -306,7 +324,14 @@ class SettingsScreen extends StatelessWidget {
                       iconColor: const Color(0xFF0288D1),
                       title: 'Privacy Policy',
                       subtitle: 'How we handle your data',
-                      onTap: () => _showLegalSheet(context, isDark, _kPrivacyPolicy, 'Privacy Policy'),
+                      onTap: () async {
+                        final uri = Uri.parse(
+                          'https://mrdemodev.github.io/nigeria-quran/privacy-policy.html',
+                        );
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        }
+                      },
                     ),
                     Divider(height: 1, indent: 64, color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.06)),
                     _TapTile(
@@ -683,51 +708,6 @@ class _Divider extends StatelessWidget {
     );
   }
 }
-
-const String _kPrivacyPolicy = '''
-Effective date: November 24, 2026
-
-Qur'an NG ("the App") is developed to help users read and listen to the Qur'an, view prayer information, and locate the Qibla. This Privacy Policy explains how information is handled.
-
-1. INFORMATION THE APP COLLECTS
-The App itself does not request your name, email address, account credentials, or contacts. Bookmarks, reading progress, quiz progress, downloads, and settings are stored locally on your device.
-
-2. LOCATION DATA
-The App requests approximate or precise location access to calculate prayer times and Qibla direction. Location is used on your device and may be stored locally with your settings. You may deny or revoke location permission in your device settings; core Qur'an reading features remain available.
-
-3. DEVICE SERVICES AND STORAGE
-The App may use notifications, local storage, network access, media playback, and sharing features. Notifications are scheduled locally; the App does not operate a third-party push-messaging service. Shared Quran images or text are handled by the sharing service you choose.
-
-4. THIRD-PARTY SERVICES
-The App uses:
-- Google Firebase and Firebase Remote Config for app configuration and feature settings.
-- Google AdMob to provide advertisements. Google or its partners may collect or receive device identifiers, IP address, approximate location, app interactions, and diagnostics for advertising, fraud prevention, and measurement.
-- Audio and Qur'an audio-content servers when streaming recitations.
-- Google Fonts only to render text. Font files are bundled in the App.
-
-These providers process data according to their own privacy policies. Google Privacy Policy: https://policies.google.com/privacy
-
-5. INTERNET AND AUDIO
-Streaming Qur'anic audio requires internet access. Your device may transmit IP address and standard network information to the selected audio server.
-
-6. DATA USE
-We use information to provide and maintain features, calculate prayer-related information, control app features remotely, display advertisements, and improve the App. We do not sell personal information.
-
-7. DATA RETENTION AND SECURITY
-Local bookmarks, progress, downloads, and settings remain on your device until deleted or the App is uninstalled. Third-party providers retain data according to their policies. No internet-based storage system is completely secure.
-
-8. CHILDREN'S PRIVACY
-The App is intended for a general audience and does not knowingly collect personal information from children. If you believe a child has provided personal information, contact us at quranng@gmail.com.
-
-9. YOUR CHOICES
-You can revoke location and notification permissions, clear App storage, restrict ad personalization in your Google device settings where available, or uninstall the App.
-
-10. CHANGES
-We may update this Privacy Policy. The effective date will change when the policy is revised.
-
-11. CONTACT
-For questions or requests, contact: quranng@gmail.com
-''';
 
 const String _kTermsAndConditions = '''
 Last updated: June 2025

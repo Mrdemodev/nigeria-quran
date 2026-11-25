@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'remote_config_service.dart';
@@ -12,6 +13,8 @@ class AdsService {
   static String get rewarded2AdUnitId    => RemoteConfigService.instance.rewarded2AdUnitId;
 
   bool _initialized = false;
+  bool get isInitialized => _initialized;
+  Future<void>? _initializationFuture;
   InterstitialAd? _interstitialAd;
   RewardedInterstitialAd? _rewarded1;
   RewardedInterstitialAd? _rewarded2;
@@ -24,17 +27,50 @@ class AdsService {
   /// Call fire-and-forget after runApp() — never awaited on the main path.
   Future<void> initialize() async {
     if (_initialized) return;
-    try {
-      await MobileAds.instance.initialize();
-      _initialized = true;
-      debugPrint('AdMob initialised');
-      // Pre-warm ads with a short delay so first frame is never blocked
-      Future.delayed(const Duration(seconds: 3), _loadInterstitial);
-      Future.delayed(const Duration(seconds: 6), _loadRewarded1);
-      Future.delayed(const Duration(seconds: 9), _loadRewarded2);
-    } catch (e) {
-      debugPrint('AdMob init error: $e');
-    }
+    if (_initializationFuture != null) return _initializationFuture!;
+    _initializationFuture = _initialize();
+    await _initializationFuture;
+  }
+
+  Future<void> _initialize() async {
+    final completer = Completer<void>();
+
+    ConsentInformation.instance.requestConsentInfoUpdate(
+      ConsentRequestParameters(),
+      () async {
+        try {
+          await ConsentForm.loadAndShowConsentFormIfRequired(
+            (formError) {
+              if (formError != null) {
+                debugPrint('Consent form error: ${formError.message}');
+              }
+            },
+          );
+
+          if (!await ConsentInformation.instance.canRequestAds()) {
+            completer.complete();
+            return;
+          }
+
+          await MobileAds.instance.initialize();
+          _initialized = true;
+          debugPrint('AdMob initialised');
+          Future.delayed(const Duration(seconds: 3), _loadInterstitial);
+          Future.delayed(const Duration(seconds: 6), _loadRewarded1);
+          Future.delayed(const Duration(seconds: 9), _loadRewarded2);
+        } catch (e) {
+          debugPrint('AdMob init error: $e');
+        } finally {
+          if (!completer.isCompleted) completer.complete();
+        }
+      },
+      (error) async {
+        debugPrint('Consent info update error: ${error.message}');
+        completer.complete();
+      },
+    );
+
+    await completer.future;
   }
 
   // ── Interstitial ─────────────────────────────────────────

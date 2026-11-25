@@ -18,7 +18,9 @@ class _AdBannerState extends State<AdBanner> {
   @override
   void initState() {
     super.initState();
-    _load();
+    AdsService.instance.initialize().then((_) {
+      if (mounted && AdsService.instance.isInitialized) _load();
+    });
   }
 
   void _load() {
